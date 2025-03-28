@@ -1,0 +1,39 @@
+name: Run Fetch Script on Merge to Master
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-fetch-script:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::918557237823:role/YOUR_GITHUB_ACTIONS_ROLE
+          aws-region: us-east-1  # Change to your AWS region
+
+      - name: Fetch MySQL Credentials from AWS Secrets Manager
+        id: get-secret
+        run: |
+          SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id mysql_credentials --query SecretString --output text)
+          echo "::add-mask::$SECRET_JSON"
+          echo "MYSQL_USER=$(echo $SECRET_JSON | jq -r '.username')" >> $GITHUB_ENV
+          echo "MYSQL_PASSWORD=$(echo $SECRET_JSON | jq -r '.password')" >> $GITHUB_ENV
+          echo "MYSQL_HOST=$(echo $SECRET_JSON | jq -r '.host')" >> $GITHUB_ENV
+          echo "MYSQL_PORT=$(echo $SECRET_JSON | jq -r '.port')" >> $GITHUB_ENV
+
+      - name: Run Fetch Script
+        run: |
+          chmod +x fetch.sh
+          ./fetch.sh "$MYSQL_USER" "$MYSQL_PASSWORD" "$MYSQL_HOST" "$MYSQL_PORT"
