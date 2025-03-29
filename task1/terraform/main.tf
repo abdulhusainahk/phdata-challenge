@@ -1,18 +1,5 @@
-provider "aws" {
-  region = "us-east-1"  
-  profile = "default"   
-}
-terraform {
-  backend "s3" {
-    bucket  = "phdata-terraform-state--use1-az4--x-s3"
-    key     = "terraform/phdata-terraform-state/terraform.tfstate"
-    profile = "default"
-    region  = "us-east-1"
-  }
-}
-
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.vpc_cidr_block
   tags = {
     Name = "MainVPC"
     Owner = "Abdul"
@@ -20,10 +7,9 @@ resource "aws_vpc" "main" {
     Environment = "Test"
   }
 }
-
 resource "aws_subnet" "main" {
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.1.0/24"
+  cidr_block              = var.subnet_cidr_block
   map_public_ip_on_launch = true
   availability_zone       = "us-east-1a"
 
@@ -73,7 +59,7 @@ resource "aws_security_group" "allow_custom" {
     from_port   = 3307
     to_port     = 3307
     protocol    = "tcp"
-    cidr_blocks = ["152.59.63.72/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -101,20 +87,7 @@ resource "aws_secretsmanager_secret_version" "mysql_credentials" {
     port     = var.port
   })
 }
-variable "mysql_admin_username" {
-  description = "MySQL username"
-  type        = string
-  default     = "admin"
-}
-variable "mysql_admin_password" {
-  description = "valid password for MySQL"
-  type        = string
-}
-variable "port" {
-  description = "MySQL port"
-  type        = number
-  default     = 3307
-}
+
 resource "aws_instance" "web" {
   ami           = "ami-084568db4383264d4" # Ubuntu AMI, update it as per region
   instance_type = "t2.micro"
@@ -132,9 +105,13 @@ resource "aws_instance" "web" {
               sudo systemctl restart mysql
               sudo ufw allow 3307/tcp
               sudo ufw reload
+              sudo git clone https://github.com/datacharmer/test_db.git
+              sudo cd test_db
               sudo mysql -e "CREATE USER 'admin'@'%' IDENTIFIED BY '${var.mysql_admin_password}';"
               sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;"
               sudo mysql -e "FLUSH PRIVILEGES;" 
+              sudo mysql -t < employees.sql
+              sudo time mysql -t < test_employees_sha.sql
               EOF
 
   tags = {
