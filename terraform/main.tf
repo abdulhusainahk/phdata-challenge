@@ -66,14 +66,14 @@ resource "aws_security_group" "allow_custom" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["152.58.32.247/32"]
+    cidr_blocks = ["152.59.63.72/32"]
   }
 
   ingress {
     from_port   = 3307
     to_port     = 3307
     protocol    = "tcp"
-    cidr_blocks = ["152.58.32.247/32"]
+    cidr_blocks = ["152.59.63.72/32"]
   }
 
   egress {
