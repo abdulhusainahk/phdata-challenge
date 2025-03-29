@@ -35,6 +35,6 @@ jobs:
 
       - name: Run Fetch Script
         run: |
-          cd dbscript
+          cd task1/dbscript
           chmod +x data_fetch.sh
           ./data_fetch.sh "$MYSQL_USER" "$MYSQL_PASSWORD" "$MYSQL_HOST" "$MYSQL_PORT"
