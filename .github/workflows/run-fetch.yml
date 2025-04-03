@@ -26,7 +26,7 @@ jobs:
       - name: Fetch MySQL Credentials from AWS Secrets Manager
         id: get-secret
         run: |
-          SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id ph_mysql_credentials --query SecretString --output text)
+          SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id phdata_mysql_credentials --query SecretString --output text)
           echo "::add-mask::$SECRET_JSON"
           echo "MYSQL_USER=$(echo $SECRET_JSON | jq -r '.username')" >> $GITHUB_ENV
           echo "MYSQL_PASSWORD=$(echo $SECRET_JSON | jq -r '.password')" >> $GITHUB_ENV
