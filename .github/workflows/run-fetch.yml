@@ -20,7 +20,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::918557237823:role/GitHubActionsRole
+          role-to-assume: arn:aws:iam::${{ secrets.ACCOUNT_ID }}:role/GitHubActionsRole
           aws-region: us-east-1  # Change to your AWS region
 
       - name: Fetch MySQL Credentials from AWS Secrets Manager
