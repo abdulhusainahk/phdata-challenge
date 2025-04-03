@@ -23,6 +23,6 @@ variable "port" {
 variable "secretmanager_name" {
   description = "Name of the secret in AWS Secrets Manager"
   type        = string
-  default     = "ph_mysql_credentials"
+  default     = "phdata_mysql_credentials"
   
 }

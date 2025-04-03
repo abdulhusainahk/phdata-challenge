@@ -106,7 +106,7 @@ resource "aws_instance" "web" {
               sudo ufw allow 3307/tcp
               sudo ufw reload
               sudo git clone https://github.com/datacharmer/test_db.git
-              sudo cd test_db
+              cd test_db
               sudo mysql -e "CREATE USER 'admin'@'%' IDENTIFIED BY '${var.mysql_admin_password}';"
               sudo mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;"
               sudo mysql -e "FLUSH PRIVILEGES;" 
