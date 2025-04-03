@@ -52,7 +52,7 @@ resource "aws_security_group" "allow_custom" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["152.59.63.72/32"]
+    cidr_blocks = ["152.56.12.56/32"]
   }
 
   ingress {
@@ -76,7 +76,7 @@ resource "aws_security_group" "allow_custom" {
   }
 }
 resource "aws_secretsmanager_secret" "mysql_credentials" {
-  name = "mysql_credentials"
+  name = var.secretmanager_name
 }
 
 resource "aws_secretsmanager_secret_version" "mysql_credentials" {
@@ -93,7 +93,7 @@ resource "aws_instance" "web" {
   instance_type = "t2.micro"
   subnet_id     = aws_subnet.main.id
   vpc_security_group_ids = [aws_security_group.allow_custom.id]
-  key_name      = "aws-ssh-key" # Replace with your key pair name
+  key_name      = "aws-ssh-key" 
 
   user_data = <<-EOF
               #!/bin/bash

@@ -20,3 +20,9 @@ variable "port" {
   type        = number
   default     = 3307
 }
+variable "secretmanager_name" {
+  description = "Name of the secret in AWS Secrets Manager"
+  type        = string
+  default     = "ph_mysql_credentials"
+  
+}
